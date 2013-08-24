@@ -1,0 +1,597 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>命令式编程、面向对象编程与函数式编程比较</title>
+    <meta name="description" content="">
+    <meta name="author" content="zhywang">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">zhywang's blog</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h2>命令式编程、面向对象编程与函数式编程比较 </h2>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span>24 August 2013</span>
+    </div>
+    <div class="content">
+      <p>继命令式编程与面向对象编程之后，函数式编程是近来比较热门的编程范式之一。</p>
+
+<p>那么，从命令式编程，到面向对象编程，再到近来日渐流行的函数式编程，它们之间的区别是什么呢？编程范式的进化，又反映了业界发展过程中怎样的趋势？本文是作者关于这两个问题的一些初步的思考，并结合一个很简单的例子来进行解释。</p>
+
+<h3 id='id1'>需求</h3>
+
+<p>本文将会通过实现一个简单的数据结构－－栈（Stack），来演示不同编程范式在解决具体问题时的思想。</p>
+
+<p>为了简化起见，本文中实现的Stack只需要提供以下3个功能：</p>
+
+<ul>
+<li>is_empty： 返回一个标志，表示当前栈是否为空</li>
+
+<li>pop： 从栈顶弹出一个元素，若栈为空，则出错</li>
+
+<li>push： 将一个元素压入栈</li>
+</ul>
+
+<p>pop和push至少支持int型数据的出入栈。</p>
+
+<h3 id='id2'>语言选择</h3>
+
+<ul>
+<li>命令式：经典的C语言</li>
+
+<li>面向对象：流行的Java语言</li>
+
+<li>函数式：近年来新兴的基于JVM平台的Scala语言</li>
+</ul>
+
+<h3 id='id3'>不同编程范式中的实现</h3>
+
+<h4 id='id4'>命令式</h4>
+
+<p>在C语言中实现Stack，一个比较容易想到的解决方案是底层存储数据时使用数组，沿着这种思路，我们可以写出如下代码：</p>
+
+<h6 id='c__cat_stackh'>~/c $ cat stack.h</h6>
+
+<pre><code>#ifndef _STACK_H
+#define _STACK_H
+
+typedef struct stack{
+	int *data;
+	int capacity;
+	int index;
+} *Stack;
+
+Stack create();
+int is_empty(Stack);
+int pop(int*, Stack);
+int push(int, Stack);
+
+#endif</code></pre>
+
+<p>程序中定义了一个struct作为Stack的类型，并使用一个指向int数据的指针来保存Stack中数据所在的位置，使用两个变量来保存Stack当前的容量以及栈顶数据的index，声明了四个函数，来完成Stack的创建及操作。</p>
+
+<p>这四个函数的定义如下：</p>
+
+<h6 id='c__cat_stackc'>~/c $ cat stack.c</h6>
+
+<pre><code>#include &quot;stack.h&quot;
+#include &lt;stdlib.h&gt;
+
+#define INCREASE_SIZE 8
+int ensureCapacity(Stack stack) {
+    if(stack-&gt;index + 1 &lt; stack-&gt;capacity)
+        return 1;
+	int* temp= (int*)realloc(stack-&gt;data, sizeof(int)*(stack-&gt;capacity + INCREASE_SIZE));
+    if(temp == NULL){
+        return 0;
+    }
+	stack-&gt;data=temp;
+	stack-&gt;capacity+=INCREASE_SIZE;
+    return 1;
+}
+
+Stack create() {
+	Stack stack=(Stack)malloc(sizeof(struct stack));
+	if(stack) {
+		stack-&gt;data=NULL;
+		stack-&gt;index=-1;
+		stack-&gt;capacity=0;
+	}
+	return stack;
+}
+
+int is_empty(Stack stack) {
+    return stack-&gt;index == -1;
+}
+
+int pop(int *elem, Stack stack) {
+	if(is_empty(stack))
+        return 0;
+	*elem = stack-&gt;data[stack-&gt;index];
+	stack-&gt;index--;
+	return 1;
+}
+
+int push(int value, Stack stack) {
+	if(!ensureCapacity(stack))
+		return 0;
+	stack-&gt;data[++(stack-&gt;index)]=value;
+	return 1;
+}</code></pre>
+
+<p>我们可以这样使用上面定义的栈：</p>
+
+<h6 id='c__cat_mainc'>~/c $ cat main.c</h6>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &quot;stack.h&quot;
+int main(int argc, char* argv[]) {
+	int i=0;
+	Stack s=create();
+	while(i&lt;10 &amp;&amp; push(i, s))
+		i++;
+	while(!is_empty(s) &amp;&amp; pop(&amp;i, s))
+		printf(&quot;%d\n&quot;,i);
+}</code></pre>
+
+<p>通过上面的演示，我们不难发现C语言的不便之处：</p>
+
+<ul>
+<li>对于程序模块化的支持比较差：在stack.h文件中，声明接口函数的同时，也定义了具体实现使用的数据结构，造成声明和实现的紧耦合，如果修改实现（比如使用链表代替数组），则作为接口的stack.h文件也要同时修改。</li>
+
+<li>不支持数据与操作的绑定：由于难以实现面向对象类编程语言中的this关键字的功能，导致数据和操作分离。 * 不支持数据隔离：数据对于任意代码都是可见的。</li>
+</ul>
+
+<h4 id='id5'>面向对象式</h4>
+
+<p>使用Java实现时，我们仍然可以在底层使用数组来保存数据，代码如下：</p>
+
+<p>首先定义一个接口，声明Stack所支持的操作：</p>
+
+<h6 id='java__cat_stackjava'>~/java $ cat Stack.java</h6>
+
+<pre><code>public interface Stack&lt;T&gt; {
+    boolean isEmpty();
+    T pop();
+    void push(T value);
+}</code></pre>
+
+<p>然后是具体实现类，底层数据存储使用数组：</p>
+
+<h6 id='java__cat_arraystackjava'>~/java $ cat ArrayStack.java</h6>
+
+<pre><code>import java.util.Arrays;
+
+public class ArrayStack&lt;T&gt; implements Stack&lt;T&gt; {
+    private static final int INCREASE_SIZE = 8;
+    private Object[] data;
+    private int index;
+
+    public ArrayStack() {
+        data = new Object[0];
+        index = -1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return index == -1;
+    }
+
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public T pop() {
+        return (T) data[index--];
+    }
+
+    @Override
+    public void push(T value) {
+        ensureCapacity();
+        data[++index] = value;
+    }
+
+    private void ensureCapacity() {
+        if (index == data.length - 1) {
+            data = Arrays.copyOf(data, data.length + INCREASE_SIZE);
+        }
+    }
+
+}</code></pre>
+
+<p>我们可以这样使用以上定义的Stack：</p>
+
+<h6 id='java__cat_mainjava'>~/java $ cat Main.java</h6>
+
+<pre><code>public class Main {
+    public static void main(String[] args) {
+        Stack&lt;Integer&gt; stack = new ArrayStack&lt;Integer&gt;();
+        for (int i = 0; i &lt; 10; i++)
+            stack.push(i);
+        while (!stack.isEmpty())
+            System.out.println(stack.pop());
+    }
+}</code></pre>
+
+<p>在这段代码中，利用面向对象范式的封装、继承及多态的特性，解决了上一节中面向过程范式的几个问题：</p>
+
+<ul>
+<li>接口Stack只声明操作，不需要定义具体实现，不同的实现可以有不同的内部数据结构。 * 数据与操作绑定，使用时更加自然直观。 * 实现了数据隔离，无法从外部访问具体实现内部的数据结构。</li>
+</ul>
+
+<p>同时这些特性也促进了面向对象编程范式的普及，使其成为当今最流行的编程范式。</p>
+
+<h4 id='id6'>关于面向对象式的进一步思考</h4>
+
+<p>就本文示例的需求来说，进一步思考，我们可以用另外一种方式阐释需求：</p>
+
+<ul>
+<li>is_empty： 只有当Stack为空时，才会返回true，否则为false。</li>
+
+<li>pop： 将原来的Stack拆成两部分，第一部分是栈顶的元素，第二部分是除去第一部分之后的Stack。</li>
+
+<li>push： 使用新的元素和原来的Stack，拼成一个新Stack，这个Stack由两部分组成，第一部分是新元素，第二部分是原来的栈。</li>
+</ul>
+
+<p>此时，pop将会有两个返回值，为了解决这个问题，我们可以增加一个方法，并修改pop的行为：</p>
+
+<ul>
+<li>top： 返回栈顶元素。</li>
+
+<li>pop： 将原来的Stack拆成两部分，第一部分是栈顶的元素，第二部分是除去第一部分之后的Stack，返回第二部分。</li>
+</ul>
+
+<p>这种思路已经接近函数式编程了，沿着这个思路，我们得到以下代码：</p>
+
+<p>首先仍然是定义接口：</p>
+
+<pre><code>public abstract class Stack&lt;T&gt; {
+    public abstract boolean isEmpty();
+
+    public abstract T top();
+
+    public abstract Stack&lt;T&gt; pop();
+
+    public abstract Stack&lt;T&gt; push(T value);
+}</code></pre>
+
+<p>然后是实现：</p>
+
+<pre><code>public enum StackFactory {
+
+    FPSTACKFACTORY {
+        @Override
+        public &lt;T&gt; Stack&lt;T&gt; createStack() {
+            return new EmpytStack&lt;T&gt;();
+        }
+
+        @Override
+        public &lt;T&gt; Stack&lt;T&gt; createStack(T... values) {
+            return createStack(values, 0, new EmpytStack&lt;T&gt;());
+        }
+
+        @Override
+        public &lt;T&gt; Stack&lt;T&gt; createStack(T[] values, int current, Stack&lt;T&gt; stack) {
+            if (current == values.length)
+                return stack;
+            Stack&lt;T&gt; newStack = stack.push(values[current]);
+            current += 1;
+            return createStack(values, current, newStack);
+        }
+    };
+
+    public abstract &lt;T&gt; Stack&lt;T&gt; createStack();
+
+    public abstract &lt;T&gt; Stack&lt;T&gt; createStack(T... values);
+
+    public abstract &lt;T&gt; Stack&lt;T&gt; createStack(T[] values, int current, Stack&lt;T&gt; stack);
+
+}
+
+class EmpytStack&lt;T&gt; extends Stack&lt;T&gt; {
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public T top() {
+        throw new IllegalArgumentException(&quot;Empyt stack has no top elem!&quot;);
+    }
+
+    @Override
+    public Stack&lt;T&gt; pop() {
+        throw new IllegalArgumentException(&quot;Empyt stack can not pop!&quot;);
+    }
+
+    @Override
+    public Stack&lt;T&gt; push(T value) {
+        return new NonEmptyStack&lt;T&gt;(value, this);
+    }
+
+}
+
+class NonEmptyStack&lt;T&gt; extends Stack&lt;T&gt; {
+    private final T value;
+    private final Stack&lt;T&gt; oldStack;
+
+    NonEmptyStack(T value, Stack&lt;T&gt; oldStack) {
+        this.value = value;
+        this.oldStack = oldStack;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public T top() {
+        return value;
+    }
+
+    @Override
+    public Stack&lt;T&gt; pop() {
+        return oldStack;
+    }
+
+    @Override
+    public Stack&lt;T&gt; push(T value) {
+        return new NonEmptyStack&lt;T&gt;(value, this);
+    }
+}</code></pre>
+
+<p>使用方法：</p>
+
+<pre><code>public class Main {
+    public static void main(String[] args) {
+        Stack&lt;Integer&gt; stack = StackFactory.FPSTACKFACTORY.createStack(0, 1, 2, 3, 4, 5);
+        while (!stack.isEmpty()) {
+            System.out.println(stack.top());
+            stack = stack.pop();
+        }
+    }
+}</code></pre>
+
+<p>使用这种方式实现的Stack有以下特点：</p>
+
+<ul>
+<li>Stack内部状态不可改变：内部状态全部是final的，每次压栈都会创建新的Stack。 * 尽量使用递归：初始化和遍历栈时，都使用递归而不是循环。 * 会创建大量对象，增加运行时资源消耗。</li>
+</ul>
+
+<p>另外，由于Java对函数式编程支持不好，初始化时我们仍然使用了可变量（使用crruent遍历values）。</p>
+
+<p>下面，我们看一下在支持函数式编程的Scala中，我们可以怎么做。</p>
+
+<h4 id='id7'>函数式</h4>
+
+<p>仍然沿用上一小节的思路，给出Scala中的Stack实现：</p>
+
+<p>定义接口：</p>
+
+<pre><code>trait Stack[+A] {
+  def push[B &gt;: A](elem: B): Stack[B]
+
+  def pop(): Stack[A]
+
+  def top(): A
+
+  def isEmpty(): Boolean
+}</code></pre>
+
+<p>实现：</p>
+
+<pre><code>object EmptyStack extends Stack[Nothing] {
+  def push[A](elem: A): Stack[A] = NonEmptyStack[A](elem, this)
+
+  def isEmpty(): Boolean = true
+
+  def pop(): Nothing = sys.error(&quot;Empty stack can not pop!&quot;)
+
+  def top(): Nothing = sys.error(&quot;Empty stack can not top!&quot;)
+}
+
+case class NonEmptyStack[A](elem: A, tail: Stack[A]) extends Stack[A] {
+  def push[B &gt;: A](elem: B): Stack[B] = NonEmptyStack(elem, this)
+
+  def pop(): Stack[A] = tail
+
+  def top(): A = elem
+
+  def isEmpty(): Boolean = false
+}</code></pre>
+
+<p>使用：</p>
+
+<pre><code>object Main {
+  def createStack(values: Any*): Stack[Any] = {
+    values match {
+      case Nil =&gt; EmptyStack
+      case _ =&gt; values.tail./:(EmptyStack.push(values.head))(_.push(_))
+    }
+  }
+
+  def printStack[A](s: Stack[A]): Unit = {
+    s match {
+      case EmptyStack =&gt; println
+      case stack =&gt; {
+        println(s.top())
+        printStack(s.pop())
+      }
+    }
+  }
+
+  def main(args: Array[String]): Unit = {
+    printStack(createStack(1, 2l, 3.0f, 4.0, &quot;test&quot;, null))
+  }
+}</code></pre>
+    </div>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/categories.html#scala-ref">
+    		scala <span>1</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+    
+
+    <hr>
+    <div class="pagination">
+      <ul>
+      
+        <li class="prev disabled"><a>&larr; Previous</a></li>
+      
+        <li><a href="/archive.html">Archive</a></li>
+      
+        <li class="next disabled"><a>Next &rarr;</a>
+      
+      </ul>
+    </div>
+    <hr>
+    
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2013 zhywang
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+    <link href="/assets/themes/twitter/google-code-prettify/prettify.css" rel="stylesheet" type="text/css" media="all">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/themes/twitter/google-code-prettify/prettify.js"></script>
+    <script type="text/javascript">
+        $(function(){
+          $("pre").addClass("prettyprint");
+          prettyPrint();
+          $('.v-entry a').each(function(){
+            if($(this).attr("href").indexOf("heiniuhaha") == -1){
+              $(this).attr("target", "_blank");
+            }
+          })
+        });
+      </script>
+  </body>
+</html>
+

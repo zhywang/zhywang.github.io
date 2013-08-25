@@ -5,22 +5,18 @@
         <description>zhywang's blog - zhywang</description>
         <link>http://zhywang.github.io</link>
         <link>http://zhywang.github.io</link>
-        <lastBuildDate>2013-08-25T00:04:12+08:00</lastBuildDate>
-        <pubDate>2013-08-25T00:04:12+08:00</pubDate>
+        <lastBuildDate>2013-08-25T11:41:42+08:00</lastBuildDate>
+        <pubDate>2013-08-25T11:41:42+08:00</pubDate>
         <ttl>1800</ttl>
 
 
         <item>
-                <title>命令式编程、面向对象编程与函数式编程比较</title>
-                <description>&lt;p&gt;继命令式编程与面向对象编程之后，函数式编程是近来比较热门的编程范式之一。&lt;/p&gt;
+                <title>关于命令式编程、面向对象编程与函数式编程的思考</title>
+                <description>&lt;p&gt;继命令式编程与面向对象编程之后，函数式编程成为近来比较热门的编程范式之一，那么，命令式编程、面向对象编程与日渐流行的函数式编程，三种编程范式背后的思想有什么区别？本文就是我对这个问题的一些思考，分享出来，与大家探讨。&lt;/p&gt;
 
-&lt;p&gt;那么，从命令式编程，到面向对象编程，再到近来日渐流行的函数式编程，它们之间的区别是什么呢？编程范式的进化，又反映了业界发展过程中怎样的趋势？本文是作者关于这两个问题的一些初步的思考，并结合一个很简单的例子来进行解释。&lt;/p&gt;
+&lt;p&gt;在下文中，我会通过实现一个简单的数据结构－－栈（Stack），来演示不同编程范式在解决具体问题时的实践。&lt;/p&gt;
 
-&lt;h3 id='id1'&gt;需求&lt;/h3&gt;
-
-&lt;p&gt;本文将会通过实现一个简单的数据结构－－栈（Stack），来演示不同编程范式在解决具体问题时的思想。&lt;/p&gt;
-
-&lt;p&gt;为了简化起见，本文中实现的Stack只需要提供以下3个功能：&lt;/p&gt;
+&lt;p&gt;为了简化起见，本文中实现的Stack只需要提供以下3个函数：&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;is_empty： 返回一个标志，表示当前栈是否为空&lt;/li&gt;
@@ -30,23 +26,25 @@
 &lt;li&gt;push： 将一个元素压入栈&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;pop和push至少支持int型数据的出入栈。&lt;/p&gt;
+&lt;p&gt;pop和push这两个函数至少应该支持int型数据的出入栈。&lt;/p&gt;
 
-&lt;h3 id='id2'&gt;语言选择&lt;/h3&gt;
+&lt;h3 id='id1'&gt;语言选择&lt;/h3&gt;
 
 &lt;ul&gt;
-&lt;li&gt;命令式：经典的C语言&lt;/li&gt;
+&lt;li&gt;命令式编程：经典的C语言&lt;/li&gt;
 
-&lt;li&gt;面向对象：流行的Java语言&lt;/li&gt;
+&lt;li&gt;面向对象编程：流行的Java语言&lt;/li&gt;
 
-&lt;li&gt;函数式：近年来新兴的基于JVM平台的Scala语言&lt;/li&gt;
+&lt;li&gt;函数式编程：近年来新兴的基于JVM平台的Scala语言&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id='id3'&gt;不同编程范式中的实现&lt;/h3&gt;
+&lt;h3 id='id2'&gt;不同编程范式中的实现&lt;/h3&gt;
 
-&lt;h4 id='id4'&gt;命令式&lt;/h4&gt;
+&lt;h4 id='id3'&gt;命令式&lt;/h4&gt;
 
-&lt;p&gt;在C语言中实现Stack，一个比较容易想到的解决方案是底层存储数据时使用数组，沿着这种思路，我们可以写出如下代码：&lt;/p&gt;
+&lt;p&gt;作为命令式编程语言代表的C语言，具有语法简洁，功能强大，支持结构化编程的特点，也是各计算机专业的必修课。&lt;/p&gt;
+
+&lt;p&gt;在C语言中实现Stack，简单的解决方案是使用数组存储数据，代码如下：&lt;/p&gt;
 
 &lt;h6 id='c__cat_stackh'&gt;~/c $ cat stack.h&lt;/h6&gt;
 
@@ -65,10 +63,6 @@ int pop(int*, Stack);
 int push(int, Stack);
 
 #endif&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;程序中定义了一个struct作为Stack的类型，并使用一个指向int数据的指针来保存Stack中数据所在的位置，使用两个变量来保存Stack当前的容量以及栈顶数据的index，声明了四个函数，来完成Stack的创建及操作。&lt;/p&gt;
-
-&lt;p&gt;这四个函数的定义如下：&lt;/p&gt;
 
 &lt;h6 id='c__cat_stackc'&gt;~/c $ cat stack.c&lt;/h6&gt;
 
@@ -132,19 +126,23 @@ int main(int argc, char* argv[]) {
 		printf(&amp;quot;%d\n&amp;quot;,i);
 }&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;通过上面的演示，我们不难发现C语言的不便之处：&lt;/p&gt;
+&lt;p&gt;上面这段代码非常简单，但是通过这段代码我们仍然不难发现C语言的不便之处：&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;对于程序模块化的支持比较差：在stack.h文件中，声明接口函数的同时，也定义了具体实现使用的数据结构，造成声明和实现的紧耦合，如果修改实现（比如使用链表代替数组），则作为接口的stack.h文件也要同时修改。&lt;/li&gt;
+&lt;li&gt;不支持数据与操作绑定：由于难以实现面向对象类编程语言中的this关键字的功能，导致数据和操作分离。&lt;/li&gt;
 
-&lt;li&gt;不支持数据与操作的绑定：由于难以实现面向对象类编程语言中的this关键字的功能，导致数据和操作分离。 * 不支持数据隔离：数据对于任意代码都是可见的。&lt;/li&gt;
+&lt;li&gt;模块化的支持差：在stack.h文件中，声明接口函数的同时，也定义了具体实现使用的数据结构，造成声明和实现的紧耦合，如果修改实现（比如使用链表代替数组），则作为接口的stack.h文件也要同时修改。&lt;/li&gt;
+
+&lt;li&gt;不支持数据隔离：对于任意代码，Stack中的数据都是可见的。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h4 id='id5'&gt;面向对象式&lt;/h4&gt;
+&lt;p&gt;下面我们看一下面向对象编程语言中的做法。&lt;/p&gt;
 
-&lt;p&gt;使用Java实现时，我们仍然可以在底层使用数组来保存数据，代码如下：&lt;/p&gt;
+&lt;h4 id='id4'&gt;面向对象式&lt;/h4&gt;
 
-&lt;p&gt;首先定义一个接口，声明Stack所支持的操作：&lt;/p&gt;
+&lt;p&gt;Java语言是目前最流行的面向对象式编程语言，相比C++，Java的语法更加简单，而且支持自动内存管理，提高开发效率。&lt;/p&gt;
+
+&lt;p&gt;使用Java实现Stack时，我们仍然可以在底层使用数组来保存数据，代码如下：&lt;/p&gt;
 
 &lt;h6 id='java__cat_stackjava'&gt;~/java $ cat Stack.java&lt;/h6&gt;
 
@@ -153,8 +151,6 @@ int main(int argc, char* argv[]) {
     T pop();
     void push(T value);
 }&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;然后是具体实现类，底层数据存储使用数组：&lt;/p&gt;
 
 &lt;h6 id='java__cat_arraystackjava'&gt;~/java $ cat ArrayStack.java&lt;/h6&gt;
 
@@ -209,27 +205,29 @@ public class ArrayStack&amp;lt;T&amp;gt; implements Stack&amp;lt;T&amp;gt; {
     }
 }&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;在这段代码中，利用面向对象范式的封装、继承及多态的特性，解决了上一节中面向过程范式的几个问题：&lt;/p&gt;
+&lt;p&gt;在这段代码中，利用面向对象编程语言的封装、继承及多态的特性，解决了上一节的几个问题：&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;接口Stack只声明操作，不需要定义具体实现，不同的实现可以有不同的内部数据结构。 * 数据与操作绑定，使用时更加自然直观。 * 实现了数据隔离，无法从外部访问具体实现内部的数据结构。&lt;/li&gt;
+&lt;li&gt;&amp;#160;数据与操作封装成类，使用时更加自然直观。&lt;/li&gt;
+
+&lt;li&gt;&amp;#160;接口Stack只声明操作，不需要定义具体实现，不同的实现可以有不同的内部数据结构。&lt;/li&gt;
+
+&lt;li&gt;&amp;#160;实现了数据隔离，无法从外部访问具体实现内部的数据结构。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;同时这些特性也促进了面向对象编程范式的普及，使其成为当今最流行的编程范式。&lt;/p&gt;
+&lt;h4 id='id5'&gt;换一种思考方式&lt;/h4&gt;
 
-&lt;h4 id='id6'&gt;关于面向对象式的进一步思考&lt;/h4&gt;
-
-&lt;p&gt;就本文示例的需求来说，进一步思考，我们可以用另外一种方式阐释需求：&lt;/p&gt;
+&lt;p&gt;对于示例，我们可以用另外一种思路来实现需求：&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;is_empty： 只有当Stack为空时，才会返回true，否则为false。&lt;/li&gt;
 
-&lt;li&gt;pop： 将原来的Stack拆成两部分，第一部分是栈顶的元素，第二部分是除去第一部分之后的Stack。&lt;/li&gt;
+&lt;li&gt;pop： 将原来的Stack拆成两部分，第一部分是栈顶的元素，第二部分是除去第一部分之后的Stack，返回第一部分。&lt;/li&gt;
 
 &lt;li&gt;push： 使用新的元素和原来的Stack，拼成一个新Stack，这个Stack由两部分组成，第一部分是新元素，第二部分是原来的栈。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;此时，pop将会有两个返回值，为了解决这个问题，我们可以增加一个方法，并修改pop的行为：&lt;/p&gt;
+&lt;p&gt;在这种实现中，pop后原来的栈内容不会改变，为了解决这个问题，我们可以增加一个方法，并修改pop的行为：&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;top： 返回栈顶元素。&lt;/li&gt;
@@ -237,7 +235,7 @@ public class ArrayStack&amp;lt;T&amp;gt; implements Stack&amp;lt;T&amp;gt; {
 &lt;li&gt;pop： 将原来的Stack拆成两部分，第一部分是栈顶的元素，第二部分是除去第一部分之后的Stack，返回第二部分。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;这种思路已经接近函数式编程了，沿着这个思路，我们得到以下代码：&lt;/p&gt;
+&lt;p&gt;代码如下：&lt;/p&gt;
 
 &lt;p&gt;首先仍然是定义接口：&lt;/p&gt;
 
@@ -253,38 +251,7 @@ public class ArrayStack&amp;lt;T&amp;gt; implements Stack&amp;lt;T&amp;gt; {
 
 &lt;p&gt;然后是实现：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;public enum StackFactory {
-
-    FPSTACKFACTORY {
-        @Override
-        public &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack() {
-            return new EmpytStack&amp;lt;T&amp;gt;();
-        }
-
-        @Override
-        public &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack(T... values) {
-            return createStack(values, 0, new EmpytStack&amp;lt;T&amp;gt;());
-        }
-
-        @Override
-        public &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack(T[] values, int current, Stack&amp;lt;T&amp;gt; stack) {
-            if (current == values.length)
-                return stack;
-            Stack&amp;lt;T&amp;gt; newStack = stack.push(values[current]);
-            current += 1;
-            return createStack(values, current, newStack);
-        }
-    };
-
-    public abstract &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack();
-
-    public abstract &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack(T... values);
-
-    public abstract &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack(T[] values, int current, Stack&amp;lt;T&amp;gt; stack);
-
-}
-
-class EmpytStack&amp;lt;T&amp;gt; extends Stack&amp;lt;T&amp;gt; {
+&lt;pre&gt;&lt;code&gt;public class EmpytStack&amp;lt;T&amp;gt; extends Stack&amp;lt;T&amp;gt; {
     @Override
     public boolean isEmpty() {
         return true;
@@ -340,30 +307,45 @@ class NonEmptyStack&amp;lt;T&amp;gt; extends Stack&amp;lt;T&amp;gt; {
 &lt;p&gt;使用方法：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;public class Main {
-    public static void main(String[] args) {
-        Stack&amp;lt;Integer&amp;gt; stack = StackFactory.FPSTACKFACTORY.createStack(0, 1, 2, 3, 4, 5);
-        while (!stack.isEmpty()) {
+    public static &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack(T... values) {
+        return createStack(values, 0, new EmpytStack&amp;lt;T&amp;gt;());
+    }
+
+    public static &amp;lt;T&amp;gt; Stack&amp;lt;T&amp;gt; createStack(T[] values, int current, Stack&amp;lt;T&amp;gt; stack) {
+        if (current == values.length)
+            return stack;
+        Stack&amp;lt;T&amp;gt; newStack = stack.push(values[current]);
+        current += 1;
+        return createStack(values, current, newStack);
+    }
+    private static &amp;lt;T&amp;gt; void printStack(Stack&amp;lt;T&amp;gt; stack) {
+        if (stack.isEmpty()) 
+            return;
+        else {
             System.out.println(stack.top());
-            stack = stack.pop();
+            printStack(stack.pop());
         }
+    }
+    public static void main(String[] args) {
+        printStack(createStack(0, 1, 2, 3, 4, 5));
     }
 }&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;使用这种方式实现的Stack有以下特点：&lt;/p&gt;
+&lt;p&gt;相比上面的实现，使用这种方式的代码更加容易理解，并且有下面两个特点：&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Stack内部状态不可改变：内部状态全部是final的，每次压栈都会创建新的Stack。 * 尽量使用递归：初始化和遍历栈时，都使用递归而不是循环。 * 会创建大量对象，增加运行时资源消耗。&lt;/li&gt;
+&lt;li&gt;内部状态不可改变：Stack的属性全部是final的，每次压栈都会创建新的Stack，在Java中导致程序运行时创建大量对象。&lt;/li&gt;
+
+&lt;li&gt;使用递归而不是循环：初始化和遍历栈时，都使用递归而不是循环，由于Java缺少对于递归的优化，运行时资源消耗会增加。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;另外，由于Java对函数式编程支持不好，初始化时我们仍然使用了可变量（使用crruent遍历values）。&lt;/p&gt;
+&lt;p&gt;这两个特点也是函数式编程的特点，&lt;/p&gt;
 
-&lt;p&gt;下面，我们看一下在支持函数式编程的Scala中，我们可以怎么做。&lt;/p&gt;
+&lt;p&gt;下面，我们看一下在原生支持函数式编程的Scala中，我们可以怎么做。&lt;/p&gt;
 
-&lt;h4 id='id7'&gt;函数式&lt;/h4&gt;
+&lt;h4 id='id6'&gt;函数式&lt;/h4&gt;
 
-&lt;p&gt;仍然沿用上一小节的思路，给出Scala中的Stack实现：&lt;/p&gt;
-
-&lt;p&gt;定义接口：&lt;/p&gt;
+&lt;p&gt;由于项目的需要，最近我在学习使用Scala语言，相比Java语言，Scala语言原生支持函数式编程，并且基于JVM，对于有Java语言经验的程序员来说比较容易学习。下面是我沿用上一小节的思路，使用Scala语言实现的Stack：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;trait Stack[+A] {
   def push[B &amp;gt;: A](elem: B): Stack[B]
@@ -373,11 +355,10 @@ class NonEmptyStack&amp;lt;T&amp;gt; extends Stack&amp;lt;T&amp;gt; {
   def top(): A
 
   def isEmpty(): Boolean
-}&lt;/code&gt;&lt;/pre&gt;
+}
 
-&lt;p&gt;实现：&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;object EmptyStack extends Stack[Nothing] {
+object EmptyStack extends Stack[Nothing] {
   def push[A](elem: A): Stack[A] = NonEmptyStack[A](elem, this)
 
   def isEmpty(): Boolean = true
@@ -420,7 +401,13 @@ case class NonEmptyStack[A](elem: A, tail: Stack[A]) extends Stack[A] {
   def main(args: Array[String]): Unit = {
     printStack(createStack(1, 2l, 3.0f, 4.0, &amp;quot;test&amp;quot;, null))
   }
-}&lt;/code&gt;&lt;/pre&gt;</description>
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这段代码相比上一节中的Java实现的特点：&lt;/p&gt;
+
+&lt;p&gt;* 语法更加简洁。&lt;/p&gt;
+
+&lt;p&gt;* 提供更多的函数支持遍历和递归。&lt;/p&gt;</description>
                 <link>http://zhywang.github.io/scala/comparison-of-programming-paradigms</link>
                 <guid>http://zhywang.github.io/scala/comparison-of-programming-paradigms</guid>
                 <pubDate>2013-08-24T00:00:00+08:00</pubDate>

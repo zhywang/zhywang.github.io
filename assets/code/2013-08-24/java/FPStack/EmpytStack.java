@@ -1,35 +1,4 @@
-public enum StackFactory {
-
-    FPSTACKFACTORY {
-        @Override
-        public <T> Stack<T> createStack() {
-            return new EmpytStack<T>();
-        }
-
-        @Override
-        public <T> Stack<T> createStack(T... values) {
-            return createStack(values, 0, new EmpytStack<T>());
-        }
-
-        @Override
-        public <T> Stack<T> createStack(T[] values, int current, Stack<T> stack) {
-            if (current == values.length)
-                return stack;
-            Stack<T> newStack = stack.push(values[current]);
-            current += 1;
-            return createStack(values, current, newStack);
-        }
-    };
-
-    public abstract <T> Stack<T> createStack();
-
-    public abstract <T> Stack<T> createStack(T... values);
-
-    public abstract <T> Stack<T> createStack(T[] values, int current, Stack<T> stack);
-
-}
-
-class EmpytStack<T> extends Stack<T> {
+public class EmpytStack<T> extends Stack<T> {
     @Override
     public boolean isEmpty() {
         return true;

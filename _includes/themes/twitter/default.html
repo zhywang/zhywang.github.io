@@ -53,19 +53,16 @@
       </div>
       <hr>
       <footer>
-        <p>&copy; {{ site.time | date: '%Y' }} {{ site.author.name }}
-          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
-          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
-        </p>
+        <p/>
       </footer>
 
     </div>
 
     {% include JB/analytics %}
 
-    <link href="{{ ASSET_PATH }}/google-code-prettify/prettify.css" rel="stylesheet" type="text/css" media="all">
+    <link href="{{ ASSET_PATH }}/js/google-code-prettify/prettify.css" rel="stylesheet" type="text/css" media="all">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ ASSET_PATH }}/google-code-prettify/prettify.js"></script>
+    <script type="text/javascript" src="{{ ASSET_PATH }}/js/google-code-prettify/prettify.js"></script>
     <script type="text/javascript">
         $(function(){
           $("pre").addClass("prettyprint");

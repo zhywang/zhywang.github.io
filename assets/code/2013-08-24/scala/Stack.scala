@@ -29,10 +29,10 @@ case class NonEmptyStack[A](elem: A, tail: Stack[A]) extends Stack[A] {
 }
 
 object Main {
-  def createStack(values: Any*): Stack[Any] = {
+  def createStack[T](values: T*): Stack[T] = {
     values match {
       case Nil => EmptyStack
-      case _ => values.tail./:(EmptyStack.push(values.head))(_.push(_))
+      case _ => values.foldLeft[Stack[T]](EmptyStack)(_ push _)
     }
   }
 

@@ -356,11 +356,12 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 
 使用：
 
+	
 	object Main {
-	  def createStack(values: Any*): Stack[Any] = {
+	  def createStack[T](values: T*): Stack[T] = {
 	    values match {
 	      case Nil => EmptyStack
-	      case _ => values.tail./:(EmptyStack.push(values.head))(_.push(_))
+	      case _ => values.foldLeft[Stack[T]](EmptyStack)(_ push _)
 	    }
 	  }
 	
@@ -378,8 +379,8 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	    printStack(createStack(1, 2l, 3.0f, 4.0, "test", null))
 	  }
 	}
-	
-这段代码相比上一节中的Java实现的特点：
+
+可以看到，相比上一节中的Java实现，这段代码有如下特点：
 
 * 语法更加简洁。
 

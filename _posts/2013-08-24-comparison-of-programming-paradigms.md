@@ -216,7 +216,7 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 代码如下：
 
 首先仍然是定义接口：
-		
+			
 	public abstract class Stack<T> {
 	    public abstract boolean isEmpty();
 	
@@ -224,12 +224,13 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	
 	    public abstract Stack<T> pop();
 	
-	    public abstract Stack<T> push(T value);
+	    public abstract Stack<T> push(T elem);
 	}
+	
 
 然后是实现：
 
-	public class EmpytStack<T> extends Stack<T> {
+	public class EmptyStack<T> extends Stack<T> {
 	    @Override
 	    public boolean isEmpty() {
 	        return true;
@@ -237,28 +238,28 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	
 	    @Override
 	    public T top() {
-	        throw new IllegalArgumentException("Empyt stack has no top elem!");
+	        throw new IllegalArgumentException("Empty stack has no top elem!");
 	    }
 	
 	    @Override
 	    public Stack<T> pop() {
-	        throw new IllegalArgumentException("Empyt stack can not pop!");
+	        throw new IllegalArgumentException("Empty stack can not pop!");
 	    }
 	
 	    @Override
-	    public Stack<T> push(T value) {
-	        return new NonEmptyStack<T>(value, this);
+	    public Stack<T> push(T elem) {
+	        return new NonEmptyStack<T>(elem, this);
 	    }
 	
 	}
 	
 	class NonEmptyStack<T> extends Stack<T> {
-	    private final T value;
-	    private final Stack<T> oldStack;
+	    private final T head;
+	    private final Stack<T> tail;
 	
-	    NonEmptyStack(T value, Stack<T> oldStack) {
-	        this.value = value;
-	        this.oldStack = oldStack;
+	    NonEmptyStack(T head, Stack<T> tail) {
+	        this.head = head;
+	        this.tail = tail;
 	    }
 	
 	    @Override
@@ -268,17 +269,17 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	
 	    @Override
 	    public T top() {
-	        return value;
+	        return head;
 	    }
 	
 	    @Override
 	    public Stack<T> pop() {
-	        return oldStack;
+	        return tail;
 	    }
 	
 	    @Override
-	    public Stack<T> push(T value) {
-	        return new NonEmptyStack<T>(value, this);
+	    public Stack<T> push(T elem) {
+	        return new NonEmptyStack<T>(elem, this);
 	    }
 	}
 
@@ -286,7 +287,7 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 
 	public class Main {
 	    public static <T> Stack<T> createStack(T... values) {
-	        return createStack(values, 0, new EmpytStack<T>());
+	        return createStack(values, 0, new EmptyStack<T>());
 	    }
 	
 	    public static <T> Stack<T> createStack(T[] values, int current, Stack<T> stack) {
@@ -331,9 +332,24 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	  def top(): A
 	
 	  def isEmpty(): Boolean
+	
+	  def foreach[B](f: A => B) {
+	    if (!this.isEmpty) {
+	      f(this.top)
+	      this.pop.foreach(f)
+	    }
+	  }
 	}
 	
-
+	object Stack {
+	  def apply[T](values: T*): Stack[T] = {
+	    values match {
+	      case Nil => EmptyStack
+	      case _ => values.foldLeft[Stack[T]](EmptyStack)(_ push _)
+	    }
+	  }
+	}
+	
 	object EmptyStack extends Stack[Nothing] {
 	  def push[A](elem: A): Stack[A] = NonEmptyStack[A](elem, this)
 	
@@ -344,44 +360,30 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	  def top(): Nothing = sys.error("Empty stack can not top!")
 	}
 	
-	case class NonEmptyStack[A](elem: A, tail: Stack[A]) extends Stack[A] {
+	case class NonEmptyStack[A](head: A, tail: Stack[A]) extends Stack[A] {
 	  def push[B >: A](elem: B): Stack[B] = NonEmptyStack(elem, this)
 	
 	  def pop(): Stack[A] = tail
 	
-	  def top(): A = elem
+	  def top(): A = head
 	
 	  def isEmpty(): Boolean = false
 	}
 
+
+
 使用：
 
-	
-	object Main {
-	  def createStack[T](values: T*): Stack[T] = {
-	    values match {
-	      case Nil => EmptyStack
-	      case _ => values.foldLeft[Stack[T]](EmptyStack)(_ push _)
-	    }
-	  }
-	
-	  def printStack[A](s: Stack[A]): Unit = {
-	    s match {
-	      case EmptyStack => println
-	      case stack => {
-	        println(s.top())
-	        printStack(s.pop())
-	      }
-	    }
-	  }
-	
-	  def main(args: Array[String]): Unit = {
-	    printStack(createStack(1, 2l, 3.0f, 4.0, "test", null))
-	  }
+	object Main extends App{
+	    Stack(1, 2l, 3.0f, 4.0, "test", null).foreach(println)
 	}
 
-可以看到，相比上一节中的Java实现，这段代码有如下特点：
+可以看到，相比上一节中的Java实现，这段代码增加了下面几个特点：
 
-* 语法更加简洁。
+* 函数类型在语言层面得到支持，成为一等公民。
+* 语法更加简洁，表达力更强。
+* 对于常见的遍历操作提供更好的支持。
 
-* 提供更多的函数支持遍历和递归。
+
+文中示例代码可以在[这里](http://zhywang.github.io/assets/code/2013-08-24.tar.gz)下载。
+

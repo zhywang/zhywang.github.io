@@ -1,6 +1,6 @@
 public class Main {
     public static <T> Stack<T> createStack(T... values) {
-        return createStack(values, 0, new EmpytStack<T>());
+        return createStack(values, 0, new EmptyStack<T>());
     }
 
     public static <T> Stack<T> createStack(T[] values, int current, Stack<T> stack) {

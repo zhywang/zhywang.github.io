@@ -16,10 +16,10 @@ trait Stack[+A] {
 }
 
 object Stack {
-  def apply[T](values: T*): Stack[T] = {
+  def apply[A](values: A*): Stack[A] = {
     values match {
       case Nil => EmptyStack
-      case _ => values.foldLeft[Stack[T]](EmptyStack)(_ push _)
+      case _ => values.foldLeft[Stack[A]](EmptyStack)(_ push _)
     }
   }
 }

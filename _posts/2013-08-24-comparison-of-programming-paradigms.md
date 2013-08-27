@@ -323,7 +323,6 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 
 由于项目的需要，最近我在学习使用Scala语言，相比Java语言，Scala语言原生支持函数式编程，并且基于JVM，对于有Java语言经验的程序员来说比较容易学习。下面是我沿用上一小节的思路，使用Scala语言实现的Stack：
 
-
 	trait Stack[+A] {
 	  def push[B >: A](elem: B): Stack[B]
 	
@@ -342,10 +341,10 @@ Java语言是目前最流行的面向对象式编程语言，相比C++，Java的
 	}
 	
 	object Stack {
-	  def apply[T](values: T*): Stack[T] = {
+	  def apply[A](values: A*): Stack[A] = {
 	    values match {
 	      case Nil => EmptyStack
-	      case _ => values.foldLeft[Stack[T]](EmptyStack)(_ push _)
+	      case _ => values.foldLeft[Stack[A]](EmptyStack)(_ push _)
 	    }
 	  }
 	}

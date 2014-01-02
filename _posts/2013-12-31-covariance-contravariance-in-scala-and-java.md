@@ -8,7 +8,7 @@ tags: ["Java","类型","Scala"]
 {% include JB/setup %}
 
 
-我们知道，Java是一门静态强类型语言，Scala作为可以与Java高度兼容的新型语言，也拥有这个性质。下面，我们来看一下Java和Scala中，在处理类型继承结构中的泛型（Scala中称为类型参数）时都有哪些异同。
+我们知道，Java是一门静态强类型语言，Scala作为可以与Java高度兼容的新兴语言，也拥有这个性质。下面，我们来看一下Java和Scala中，在处理类型继承结构中的泛型（Scala中称为类型参数）时都有哪些异同。
 
 ##引子 - 从null到Option
 

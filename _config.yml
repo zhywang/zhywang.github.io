@@ -83,7 +83,7 @@ JB :
   comments :
     provider : duoshuo
     duoshuo : 
-      short_name : zhy
+      name : zhy
 
   # Settings for analytics helper
   # Set 'provider' to the analytics provider you want to use.
